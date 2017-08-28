@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from rest_framework import serializers
 
 from .models import Category
@@ -11,7 +12,6 @@ from .models import Weather
 from .models import Comment
 from .models import Star
 from .models import History
-
 
 class VersionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,17 +56,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
         }
 
 
-class RestaurantDetailSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
-    weather = WeatherSerializer()
-    distance = DistanceSerializer()
-
-    class Meta:
-        model = Restaurant
-        fields = ('id', 'name', 'address', 'category', 'weather',
-                  'distance', 'description', )
-
-
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -85,6 +74,15 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = ('id', 'restaurant', 'user', 'reg_date')
 
 
+class HistoryDetailSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
+    user = UserSerializer()
+
+    class Meta:
+        model = History
+        fields = ('id', 'restaurant', 'user', 'reg_date')
+
+
 class MapSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantMap
@@ -97,11 +95,20 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ('id', 'path', 'restaurant')
 
 
-class HistoryDetailSerializer(serializers.ModelSerializer):
-    restaurant = RestaurantSerializer()
-    user = UserSerializer()
-    thumbnailImage = ImageSerializer()
+class RestaurantDetailSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    weather = WeatherSerializer()
+    distance = DistanceSerializer()
+    restaurantimage_set = ImageSerializer(many=True, read_only=True)
+    ratingAverage = serializers.SerializerMethodField(read_only=True)
+
+    def get_ratingAverage(self, restaurant):
+        ratingAvgVal = Star.objects.filter(
+            restaurant=restaurant
+        ).aggregate(Avg('rating'))['rating__avg']
+        return ratingAvgVal if ratingAvgVal is not None else 0
 
     class Meta:
-        model = History
-        fields = ('id', 'restaurant', 'user', 'thumbnailImage', 'reg_date')
+        model = Restaurant
+        fields = ('id', 'name', 'address', 'category', 'weather',
+                  'distance', 'description', 'restaurantimage_set', 'ratingAverage',)
