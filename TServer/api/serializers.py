@@ -85,15 +85,6 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = ('id', 'restaurant', 'user', 'reg_date')
 
 
-class HistoryDetailSerializer(serializers.ModelSerializer):
-    restaurant = RestaurantSerializer()
-    user = UserSerializer()
-
-    class Meta:
-        model = History
-        fields = ('id', 'restaurant', 'user', 'reg_date')
-
-
 class MapSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantMap
@@ -104,3 +95,13 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantImage
         fields = ('id', 'path', 'restaurant')
+
+
+class HistoryDetailSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
+    user = UserSerializer()
+    thumbnailImage = ImageSerializer()
+
+    class Meta:
+        model = History
+        fields = ('id', 'restaurant', 'user', 'thumbnailImage', 'reg_date')

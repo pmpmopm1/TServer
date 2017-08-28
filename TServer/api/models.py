@@ -84,18 +84,6 @@ class Star(models.Model):
         return self.restaurant
 
 
-class History(models.Model):
-    """
-    recommand history
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    reg_date = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.user
-
-
 class RestaurantMap(models.Model):
     id = models.AutoField(primary_key=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
@@ -108,3 +96,16 @@ class RestaurantImage(models.Model):
     id = models.AutoField(primary_key=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     path = models.CharField(max_length=255)
+
+class History(models.Model):
+    """
+    recommand history
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    thumbnailImage = models.ForeignKey(RestaurantImage, on_delete=models.CASCADE, default='1')
+    reg_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user
+
