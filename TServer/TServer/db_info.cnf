@@ -1,0 +1,7 @@
+[client]
+database = 'company_near_food'
+user = 'dev'
+password = 'dev123!@#'
+host = '122.199.199.121'
+port = '3306'
+default-character-set = utf8
